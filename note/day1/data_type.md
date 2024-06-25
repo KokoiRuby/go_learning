@@ -9,7 +9,7 @@
 | **字符串类型:** | 字符串就是一串定长的字符连接起来的字符序列。<br />Go 的字符串是由单个字节连接起来的。<br />Go 语言的字符串的字节使用 UTF-8 编码标识 Unicode 文本。 |
 | **派生类型:**   | (a) 指针类型（Pointer）<br />(b) 数组类型<br />(c) 结构化类型(struct)<br />(d) Channel 类型<br />(e) 函数类型<br />(f) 切片类型<br />(g) 接口类型（interface）<br />(h) Map 类型 |
 
-#### Integer
+#### integer
 
 Architecture-Specific Types 平台相关 (长度可变): int, uint, uintptr
 
@@ -43,7 +43,7 @@ var s int8 = 127 // int8: -128~127
 s += 1           // -128
 ```
 
-#### Floating-point
+#### float(ing-point)
 
 和平台无关，默认都是 0.0，但占内存空间 | 浮点数范围 | 精度也不同
 
@@ -53,3 +53,12 @@ s += 1           // -128
 | **float64**    | 64 位浮点型数   |
 | **complex64**  | 32 位实数和虚数 |
 | **complex128** | 64 位实数和虚数 |
+
+#### byte
+
+Golang里面没有专门的字符类型，如果要存储单个字符或者字母，一般使用 `byte` 来保存
+
+#### bool
+
+在 Go 语言中 bool 类型只能是**true or false**, 1 byte
+
