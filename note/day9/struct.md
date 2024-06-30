@@ -8,7 +8,7 @@ Go 不支持纯粹的 OOP；没有 class，但支持 OOP 的特性，即可以�
 
 
 
-结构体**成员首字母大写表示公有**，可被其他包访问。小写包私有，只能在包内访问。
+结构体名**首字母大写表示公有**，可被其他包访问。小写包私有，只能在包内访问。
 
 ```go
 type Cat struct {
@@ -30,6 +30,21 @@ var cat *Cat = new(Cat)
 cat := new(Cat)
 // 5
 var cat *Cat = &Cat{...}
+```
+
+```go
+type PublicStruct struct {
+	Field1 string
+	Field2 int
+}
+
+type privateStruct struct {
+	Field1 string
+	Field2 int
+}
+
+otherpackage.PublicFunction(p1) // ok
+otherpackage.privateStruct(p2)  // nok
 ```
 
 通过 `.` 操作符来**访问成员**
