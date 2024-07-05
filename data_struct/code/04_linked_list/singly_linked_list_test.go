@@ -6,20 +6,20 @@ import (
 	"testing"
 )
 
-type SingleLinkedListTestSuite struct {
+type SinglyLinkedListTestSuite struct {
 	suite.Suite
-	sll *SingleLinkedList
+	sll *SinglyLinkedList
 }
 
-func (suite *SingleLinkedListTestSuite) SetupTest() {
-	suite.sll = NewSingleLinkedList()
+func (suite *SinglyLinkedListTestSuite) SetupTest() {
+	suite.sll = NewSinglyLinkedList()
 	for i := 0; i < 5; i++ {
 		suite.sll.Append(i)
 	}
 	suite.sll.Print()
 }
 
-func (suite *SingleLinkedListTestSuite) TestInsertAfter() {
+func (suite *SinglyLinkedListTestSuite) TestInsertAfter() {
 	ok, _ := suite.sll.InsertAfter(3, 33)
 	assert.Equal(suite.T(), true, ok)
 	suite.sll.Print()
@@ -28,7 +28,7 @@ func (suite *SingleLinkedListTestSuite) TestInsertAfter() {
 	assert.EqualError(suite.T(), err, "out of range")
 }
 
-func (suite *SingleLinkedListTestSuite) TestInsertBefore() {
+func (suite *SinglyLinkedListTestSuite) TestInsertBefore() {
 	ok, _ := suite.sll.InsertBefore(3, 33)
 	assert.Equal(suite.T(), true, ok)
 	suite.sll.Print()
@@ -37,12 +37,12 @@ func (suite *SingleLinkedListTestSuite) TestInsertBefore() {
 	assert.EqualError(suite.T(), err, "out of range")
 }
 
-func (suite *SingleLinkedListTestSuite) TestRemove() {
+func (suite *SinglyLinkedListTestSuite) TestRemove() {
 	v := suite.sll.Remove(3)
 	assert.Equal(suite.T(), 3, v)
 	suite.sll.Print()
 }
 
 func TestArrayTestSuite(t *testing.T) {
-	suite.Run(t, new(SingleLinkedListTestSuite))
+	suite.Run(t, new(SinglyLinkedListTestSuite))
 }

@@ -10,7 +10,7 @@ type Node struct {
 	val  interface{}
 }
 
-type SingleLinkedList struct {
+type SinglyLinkedList struct {
 	head   *Node
 	length uint
 }
@@ -19,18 +19,18 @@ func NewNode(v interface{}) *Node {
 	return &Node{val: v}
 }
 
-func NewSingleLinkedList() *SingleLinkedList {
-	return &SingleLinkedList{
+func NewSinglyLinkedList() *SinglyLinkedList {
+	return &SinglyLinkedList{
 		head:   NewNode(nil),
 		length: 0,
 	}
 }
 
-func (sll *SingleLinkedList) GetHead() *Node {
+func (sll *SinglyLinkedList) GetHead() *Node {
 	return sll.head
 }
 
-func (sll *SingleLinkedList) GetTail() *Node {
+func (sll *SinglyLinkedList) GetTail() *Node {
 	cur := sll.head
 	for cur.next != nil {
 		cur = cur.next
@@ -38,7 +38,7 @@ func (sll *SingleLinkedList) GetTail() *Node {
 	return cur
 }
 
-func (sll *SingleLinkedList) Append(v interface{}) {
+func (sll *SinglyLinkedList) Append(v interface{}) {
 	if sll.head.next == nil {
 		sll.head.next = NewNode(v)
 	} else {
@@ -48,7 +48,7 @@ func (sll *SingleLinkedList) Append(v interface{}) {
 	sll.length++
 }
 
-func (sll *SingleLinkedList) FindByIndex(idx uint) (prev *Node, curr *Node, err error) {
+func (sll *SinglyLinkedList) FindByIndex(idx uint) (prev *Node, curr *Node, err error) {
 	if idx >= sll.length {
 		return nil, nil, errors.New("out of range")
 	}
@@ -62,7 +62,7 @@ func (sll *SingleLinkedList) FindByIndex(idx uint) (prev *Node, curr *Node, err 
 	return pre, cur, nil
 }
 
-func (sll *SingleLinkedList) InsertAfter(idx uint, v interface{}) (bool, error) {
+func (sll *SinglyLinkedList) InsertAfter(idx uint, v interface{}) (bool, error) {
 	if idx >= sll.length {
 		return false, errors.New("out of range")
 	}
@@ -74,7 +74,7 @@ func (sll *SingleLinkedList) InsertAfter(idx uint, v interface{}) (bool, error) 
 	return true, nil
 }
 
-func (sll *SingleLinkedList) InsertBefore(idx uint, v interface{}) (bool, error) {
+func (sll *SinglyLinkedList) InsertBefore(idx uint, v interface{}) (bool, error) {
 	if idx >= sll.length {
 		return false, errors.New("out of range")
 	}
@@ -86,7 +86,7 @@ func (sll *SingleLinkedList) InsertBefore(idx uint, v interface{}) (bool, error)
 	return true, nil
 }
 
-func (sll *SingleLinkedList) Remove(idx uint) interface{} {
+func (sll *SinglyLinkedList) Remove(idx uint) interface{} {
 	if idx >= sll.length {
 		return nil
 	}
@@ -98,7 +98,7 @@ func (sll *SingleLinkedList) Remove(idx uint) interface{} {
 	return v
 }
 
-func (sll *SingleLinkedList) Print() {
+func (sll *SinglyLinkedList) Print() {
 	cur := sll.head.next
 	format := ""
 	for cur != nil {
