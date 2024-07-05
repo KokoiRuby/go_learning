@@ -43,6 +43,6 @@ func (suite *SinglyLinkedListTestSuite) TestRemove() {
 	suite.sll.Print()
 }
 
-func TestArrayTestSuite(t *testing.T) {
+func TestSinglyLinkedListTestSuite(t *testing.T) {
 	suite.Run(t, new(SinglyLinkedListTestSuite))
 }
