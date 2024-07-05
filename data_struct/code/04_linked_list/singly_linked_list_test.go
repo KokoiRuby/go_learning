@@ -43,6 +43,34 @@ func (suite *SinglyLinkedListTestSuite) TestRemove() {
 	suite.sll.Print()
 }
 
+func (suite *SinglyLinkedListTestSuite) TestReverse() {
+	suite.sll.Reverse()
+	suite.sll.Print()
+}
+
+func (suite *SinglyLinkedListTestSuite) TestHasCycle() {
+	assert.Equal(suite.T(), false, suite.sll.HasCycle())
+}
+
+func (suite *SinglyLinkedListTestSuite) TestMergeSortedList() {
+	ssl := NewSinglyLinkedList()
+	for i := 2; i < 8; i++ {
+		ssl.Append(i)
+	}
+	ssl.Print()
+	mssl := MergeSortedList(ssl, suite.sll)
+	mssl.Print()
+}
+
+func (suite *SinglyLinkedListTestSuite) TestFindMiddleNode() {
+	assert.Equal(suite.T(), 2, suite.sll.GetValue(suite.sll.FindMiddleNode()))
+}
+
+func (suite *SinglyLinkedListTestSuite) TestRemoveBottomN() {
+	suite.sll.RemoveBottomN(2)
+	suite.sll.Print()
+}
+
 func TestSinglyLinkedListTestSuite(t *testing.T) {
 	suite.Run(t, new(SinglyLinkedListTestSuite))
 }
