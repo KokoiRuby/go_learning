@@ -5,7 +5,7 @@ import (
 	"github.com/golang/groupcache/lru"
 )
 
-func main() {
+func lru4() {
 	cache := lru.New(5)
 	cache.Add("key1", "value1")
 	cache.Add("key2", "value2")

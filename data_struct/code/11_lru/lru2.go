@@ -112,10 +112,10 @@ func (c *LRUCache) moveToHead(node *LRUNode) {
 	node.prev.next = node.next
 	node.next.prev = node.prev
 
-	c.head.prev.next = node
-	node.prev = c.head.prev
-	c.head.next.prev = node
-	node.next = c.head.next
+	c.tail.next = node
+	node.prev = c.tail
+	node.next = c.head
+	c.head.prev = node
 	c.head = node
 }
 
