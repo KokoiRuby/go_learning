@@ -6,9 +6,9 @@ type BinaryTree struct {
 	root *Node
 }
 
-func NewBinaryTree(node *Node) *BinaryTree {
+func NewBinaryTree(root *Node) *BinaryTree {
 	return &BinaryTree{
-		root: node,
+		root: root,
 	}
 }
 
