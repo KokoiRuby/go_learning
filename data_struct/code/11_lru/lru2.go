@@ -1,6 +1,9 @@
 package _11_lru
 
-import "hash/fnv"
+import (
+	"fmt"
+	"hash/fnv"
+)
 
 const CAPACITY = 100
 
@@ -13,45 +16,83 @@ type LRUNode struct {
 }
 
 type LRUCache struct {
-	slots []LRUNode // singly
-
-	head, tail *LRUNode // doubly
-
-	used int
+	slots      []*LRUNode // singly
+	head, tail *LRUNode   // doubly
+	capactiy   int
+	used       int
 }
 
-func NewLRUCache() *LRUCache {
+func NewLRUCache(capactiy int) *LRUCache {
 	return &LRUCache{
-		slots: make([]LRUNode, CAPACITY),
-		head:  nil,
-		tail:  nil,
-		used:  0,
+		slots:    make([]*LRUNode, CAPACITY),
+		head:     nil,
+		tail:     nil,
+		capactiy: capactiy,
+		used:     0,
 	}
 }
 
 func (c *LRUCache) Get(key string) interface{} {
-	if c.used == 0 {
+	if c.isEmpty() {
 		return nil
 	}
-	if tmp := c.searchNode(key); tmp != nil {
-		c.moveToHead(tmp)
-		return tmp.value
+	if node := c.searchNode(key); node != nil {
+		c.moveToHead(node)
+		return node.value
+	} else {
+		return nil
 	}
-	return nil
 }
 
 func (c *LRUCache) Put(key string, value interface{}) {
 	// hit
-	if tmp := c.searchNode(key); tmp != nil {
-		c.moveToHead(tmp)
+	if node := c.searchNode(key); node != nil {
+		c.moveToHead(node)
+		return
+	} else {
+		if c.isFull() {
+			// miss + full
+			c.delTail()
+			c.addToHead(key, value)
+			return
+
+		} else {
+			// miss + not full
+			c.addToHead(key, value)
+			return
+		}
 	}
-	// miss, full
-	if c.used == CAPACITY {
-		c.delTail()
-		c.addToHead(key, value)
+}
+
+func (c *LRUCache) Remove(key string) {
+	if node := c.searchNode(key); node != nil {
+		// doubly
+		node.prev.next = node.next
+		node.next.prev = node.prev
+
+		// singly
+		var prev *LRUNode
+		slot := c.slots[simpleHash(key)]
+		for node := slot; node != nil; {
+			// gotcha
+			if node.key == key {
+				// slot
+				if prev == nil {
+					c.slots[simpleHash(key)] = node.hnext
+				} else {
+					prev.hnext = node.hnext
+				}
+				node = nil
+				c.used--
+				return
+			}
+			// step forward
+			prev = node
+			node = node.hnext
+		}
+	} else {
+		return
 	}
-	// miss, not full
-	c.addToHead(key, value)
 }
 
 func (c *LRUCache) addToHead(k string, v interface{}) {
@@ -61,54 +102,66 @@ func (c *LRUCache) addToHead(k string, v interface{}) {
 	}
 
 	// cache is empty
-	if c.tail == nil {
+	if c.isEmpty() {
 		c.head, c.tail = newNode, newNode
+		c.used++
 		return
 	}
 
 	// singly
-	tmpSlot := &c.slots[simpleHash(k)]
-	newNode.hnext = tmpSlot.hnext
-	tmpSlot.hnext = newNode
-	c.used++
+	slot := c.slots[simpleHash(k)]
+	if slot == nil {
+		c.slots[simpleHash(k)] = newNode
+	} else {
+		newNode.hnext = slot
+		slot = newNode
+	}
 
 	// doubly
 	c.tail.next = newNode
 	newNode.prev = c.tail
-	c.tail = newNode
+	newNode.next = c.head
+	c.head.prev = newNode
+	c.head = newNode
+
+	c.used++
 
 }
 
-// miss & full
 func (c *LRUCache) delTail() {
-	// cache is empty
-	if c.tail == nil {
+	if c.isEmpty() {
 		return
 	}
-	tailSlot := &c.slots[simpleHash(c.tail.key)]
-	if tailSlot.hnext != nil {
-		// singly
-		tailSlot = tailSlot.hnext
-		// doubly
-		tailSlot.prev.next = tailSlot.next
-		tailSlot.next.prev = tailSlot.prev
-		tailSlot = nil
-		c.used--
-	} else {
-		// doubly
-		tailSlot.prev.next = tailSlot.next
-		tailSlot.next.prev = tailSlot.prev
-		tailSlot = nil
-		c.used--
+	// singly
+	var prev *LRUNode
+	tailSlot := c.slots[simpleHash(c.tail.key)]
+	for node := tailSlot; node != nil; {
+		// gotcha
+		if node.key == c.tail.key {
+			if node.hnext == nil {
+				break
+			} else {
+				prev.hnext = node.hnext
+				break
+			}
+		}
+		// step forward
+		prev = node
+		node = node.hnext
 	}
+
+	// doubly
+	c.tail.prev.next = c.head
+	c.head.prev = c.tail.prev
+
+	c.used--
 }
 
-// hit
 func (c *LRUCache) moveToHead(node *LRUNode) {
 	if node == c.head {
 		return
 	}
-	// doubly
+	// doubly only
 	node.prev.next = node.next
 	node.next.prev = node.prev
 
@@ -120,7 +173,29 @@ func (c *LRUCache) moveToHead(node *LRUNode) {
 }
 
 func (c *LRUCache) searchNode(key string) *LRUNode {
-	return nil
+	if c.isEmpty() {
+		return nil
+	}
+	slot := c.slots[simpleHash(key)]
+	if slot == nil {
+		return nil
+	} else {
+		for node := slot; node != nil; node = node.hnext {
+			if node.key == key {
+				return node
+			}
+		}
+		return nil
+	}
+
+}
+
+func (c *LRUCache) isEmpty() bool {
+	return c.used == 0
+}
+
+func (c *LRUCache) isFull() bool {
+	return c.used == c.capactiy
 }
 
 func simpleHash(data string) int {
@@ -131,4 +206,12 @@ func simpleHash(data string) int {
 	}
 	hashValue := hash.Sum32()
 	return int(hashValue) % CAPACITY
+}
+
+func (c *LRUCache) Print() {
+	count := 0
+	for cur := c.head; count <= c.capactiy; cur = cur.next {
+		fmt.Printf("%v -> ", cur.key)
+		count++
+	}
 }
