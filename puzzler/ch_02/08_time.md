@@ -31,8 +31,26 @@ s := t.Format("20060102")
 fmt.Println(t, "=>", s)
 ```
 
+#### Sleep
+
+`time.Sleep` 接受一个参数，表示要暂停的时间段。
+
+时间常量：unix/unixnano timestamp (the number of s elapsed since Jan/1/1970 UTC) 只允许整数，不允许小数。
+
+```go
+const (
+	Nanosecond  Duration = 1
+	Microsecond          = 1000 * Nanosecond
+	Millisecond          = 1000 * Microsecond
+	Second               = 1000 * Millisecond
+	Minute               = 60 * Second
+	Hour                 = 60 * Minute
+)
+
+time.Sleep(time.Second * 0.1)      // nok
+time.Sleep(time.Millisecond * 100) // ok
+```
+
 #### After
 
 #### Ticker
-
-#### Sleep
