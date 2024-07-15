@@ -10,8 +10,7 @@ var s1 string = "this is a string"
 s2 := `
 this
 is
-yet
-another
+yetanother
 string.
 `
 ```
@@ -60,26 +59,6 @@ r[0] = 'b'
 fmt.Println(string(r))
 ```
 
-#### vs
-
-- `string` 是一系列 Unicode 字符的集合，用于表示文本数据。字符串的每个字符都由一个或多个字节表示，取决于字符的 Unicode 编码。
-- `rune/int32` 是 Go 语言中用于表示 Unicode 字符的类型，每个 `rune` 表示一个 Unicode 码点，可以表示任何 Unicode 字符。
-- `byte/uint8` 是 Go 语言中用于表示单个字节的类型，当处理 ASCII 字符或字节数据时，可以使用 `byte` 类型。
-
-
-
-<img src="https://miro.medium.com/v2/resize:fit:1050/1*b3TZICZOHODu0gWJdmH2KA.png" alt="img" style="zoom:67%;" />
-
-
-
-<img src="https://miro.medium.com/v2/resize:fit:1050/1*BxXZA-6Xr43TP8r0xjyn7A.png" alt="img" style="zoom:50%;" />
-
-#### utf-8
-
-一种编码格式，决定 Unicode 码点在计算机中如何存储和表示，即 Unicdode char 映射 → Byte sequence.
-
-一个 Unicode 码点，根据语言不同，一般 1~4 Bytes 不等。
-
 ### fmt
 
 | 函数       | 主要用途                                         | 输出行为                               | 返回值               |
@@ -101,3 +80,142 @@ result := fmt.Sprintln("Name:", name, "Age:", age)
 // Name: Alice Age: 30
 fmt.Print(result)
 ```
+
+### Encoding
+
+Go 的所有源码都按照 Unicode 编码规范中 UTF-8 编码格式进行编码。如果出现非 UTF-8 字符则报错。
+
+Go 支持将一个整数转换成一个 string 类型的值，但前提是整数值可代表一个有效的 unicode 码点。否则将表示为一个高亮的 `?` 字符。
+
+#### ASCII
+
+American Standard Code for Information Interchange 美国信息交换标准代码。
+
+后定位 ISO 646 标准，**仅适用于所有拉丁字母**。
+
+ASCII 使用单个字节（byte）的二进制数来编码一个字符。
+
+#### Unicode
+
+更通用，世界上**所有自然语言中的每个字符**都有一个唯一的二进制编码。
+
+计算机内部，**所有的字符都会被编码为整数**，每个特定整数都称为一个代码点。超出范围的表示为一个高亮的 `?`。
+
+使用十六进制表示：U+0061 → 'a'。
+
+支持 3 种**编码格式**：UTF-8/16/32
+
+#### UTF-8
+
+UTF-8 可变宽，会用一个或多个字节的二进制数来表示某个字符，最多使用四个字节。即**字符和字节转换**。
+
+一个受支持的字符总是可以由 UTF-8 编码为一个**字节序列**。
+
+### vs
+
+一个 string 类型的值可被拆分为一个**字符序列 []rune** ，也可被拆分为一个**字节序列 []byte**。
+
+**一个 string 类型的值在底层就是一个能够表达若干个 UTF-8 编码值的字节序列。**
+
+rune 是 Go 语言特有的一个基本数据类型，代表一个 Unicode 字符。
+
+```go
+type rune = int32 // alias
+```
+
+<img src="https://miro.medium.com/v2/resize:fit:1050/1*b3TZICZOHODu0gWJdmH2KA.png" alt="img" style="zoom:67%;" />
+
+<img src="https://miro.medium.com/v2/resize:fit:1050/1*BxXZA-6Xr43TP8r0xjyn7A.png" alt="img" style="zoom:50%;" />
+
+### [strings](https://pkg.go.dev/strings)
+
+:cry: ​`string` 
+
+- 不可变；如果要修改就只能基于原始进行裁剪 (by `[]`) 拼接 (by `+`)，产生一个**新字符串**。
+- 拼接时，会逐个**拷贝**到一个新的连续内存空间。如果不断 `+`，内存分配 pressure ↑。
+
+:smile: ​`strings.Builder`
+
+- 内置 []byte 对应一个底层数组。
+- 使用 `unsafe.Pointer` 可以对内存直接进行操作，但 Builder **只允许拼接或重置**。
+- 支持**自动扩容** x2。只要没有扩容，那么就不会发生拷贝。
+- 支持**手动扩容**。
+- **:warning: 一旦开始使用，就不可变。即不能被拷贝，也不能手动扩容。**
+
+```go
+var b strings.Builder
+b.Grow(64) // expand 64 bytes more 
+
+b.WriteString("Hello")
+b.WriteString(" ")
+b.WriteString("World")
+
+b.String() // get content
+b.Len()    // length
+
+b.Reset()  // clear
+```
+
+:smile: `strings.Reader` 高效读取，内置计数器保存已读取得字节数。
+
+`Len()` **表示的是未被读取字节的长度，而不是已存字节的长度。**
+
+```go
+reader := strings.Reader
+
+buf := make([]byte, 4)
+n, err := reader.Read(buf)
+if err != nil && err != io.EOF {
+	fmt.Println("Error reading:", err)
+	return
+}
+fmt.Printf("Read %d bytes: %s\n", n, string(buf[:n]))
+
+
+readingIndex := reader.Size() - int64(reader.Len()) // count of read
+fmt.Printf("Reading index: %d", readingIndex)
+```
+
+`strings.Reader.ReadAt` 主要用于从数据流的某个**特定位置**开始读取数据，不改变流得当前位置。
+
+```go
+reader := strings.Reader
+buf := make([]byte, 5)
+n, err := reader.ReadAt(buf, 7) // starting from offset 7
+if err != nil {
+		fmt.Println("Error reading:", err)
+		return
+}
+```
+
+`strings.Reader.Seek` 主要用于在数据流中定位到一个新的位置，然后可以从该位置继续读取数据。**适合随机/反复读取**。
+
+```go
+reader := strings.Reader
+_, err := reader.Seek(7, 0)
+buf := make([]byte, 5)
+n, err := reader.Read(buf)
+```
+
+**一次性读取**直到 `io.EOF`
+
+```go
+reader := strings.Reader
+var result []byte
+buf := make([]byte, 4)
+
+// read 4 bytes per loop until EOF
+for {
+	n, err := reader.Read(buf)
+	if err == io.EOF {
+		break
+	}
+	if err != nil {
+		fmt.Println("Error reading:", err)
+		return
+	}
+	result = append(result, buf[:n]...)
+}
+```
+
+### strconv

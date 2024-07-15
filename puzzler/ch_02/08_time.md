@@ -53,4 +53,46 @@ time.Sleep(time.Millisecond * 100) // ok
 
 #### After
 
+返回一个 Time 类型的管道，并在指定时间后发送当前时间给该管道。
+
+常用于管道分支 switch/case，做**超时兜底**。
+
+```go
+var c chan int
+func handle(int) {}
+
+func main() {
+	select {
+	case m := <-c:
+		handle(m)
+	case <-time.After(10 * time.Second):
+		fmt.Println("timed out")
+	}
+}
+```
+
 #### Ticker
+
+结构体内置一个发送管道间隔发送 tick。常用于**周期触发事件**。
+
+使用时需要注意资源的释放。当不再需要时，应该调用 `ticker.Stop()` 来释放资源，避免内存泄漏。
+
+`time.[NewTicker|NewTicker].C` 返回的是内置的管道。
+
+```go
+// ticker & timer
+ticker := time.NewTicker(1 * time.Second)
+done := time.NewTimer(10 * time.Second)
+
+for {
+	select {
+	case t := <-ticker.C:
+		fmt.Println("Tick at", t)
+	case <-done.C:
+		fmt.Println("Timer expired")
+		ticker.Stop() // release
+		return
+	}
+}
+```
+
