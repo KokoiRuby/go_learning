@@ -33,7 +33,11 @@ switch expor { // ok
 		fmt.Println("2 or 3 or 4")  
 ```
 
-类型匹配判断 **interface{} 类型变量**的值
+类型匹配判断 **interface{} 类型变量**的值。
+
+:warning: 此时不支持 `fallthrough`。
+
+**UC：在处理来自于外部类型未知的数据时，比如解析 JSON or XML，类型测试和转换会非常有用。**
 
 ```go
 switch x.(type) {

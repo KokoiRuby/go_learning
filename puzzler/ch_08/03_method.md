@@ -51,6 +51,13 @@ func (_ MyStruct) PrintSomething() {
 
 :construction_worker: 如果想要方法改变接收者的数据，就在接收者的引用类型上定义该方法。
 
+:bookmark_tabs: **总结**
+
+- 指针方法可以通过指针调用。
+- 值方法可以通过值调用。
+- 接收者是值的方法可以通过指针调用，因为指针会首先被解引用。
+- 接收者是指针的方法不可以通过值调用，因为存储在接口中的值没有地址。
+
 ```go
 // pass value
 func (r Rectangle) Area() float64 {
