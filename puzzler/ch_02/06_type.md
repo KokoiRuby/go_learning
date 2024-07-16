@@ -101,8 +101,8 @@ value, ok := x.(Type)
 ```go
 var i interface{} = "Hello"
 
-if value, ok := i.(string)；ok {
-    fmt.Println("Value:", value)
+if v, ok := i.(string)；ok {
+    fmt.Println("Value:", v)
 } else {
     fmt.Println("Not a string type")
 }
