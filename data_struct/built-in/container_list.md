@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	// new
+    // new (delayed), malloc when used
 	l := list.New()
 
 	// add elem to back/front of the list

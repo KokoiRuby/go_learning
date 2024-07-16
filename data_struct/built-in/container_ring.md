@@ -1,5 +1,7 @@
 Package ring implements operations on **circular lists**.
 
+UC: Ring Buffer, Round-robin, Playback.
+
 :construction_worker: **Not thread-safe = sync primitives needed!**
 
 ```go
@@ -59,7 +61,7 @@ func main() {
 		fmt.Println(p)
 	})
     
-	r.Unlink(2)   // 删除后面的 2 个节点
+	r.Unlink(2)   // remove last 2 nodes
 
 	// iter
 	fmt.Println("\nIterate ring:")
