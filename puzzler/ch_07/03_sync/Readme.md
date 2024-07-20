@@ -330,3 +330,58 @@ withValCtx := context.WithValue(context.Background(), "K", "V")
 value := ctx.Value("K");
 ```
 
+## [Pool](https://pkg.go.dev/sync#Pool)
+
+临时对象池，**并发安全**，它的值可以被用来存储**临时对象**，即不需要持续使用的某一类值，可有可无，创建/销毁 anytime。
+
+UC：减少 GC，适合初始化开销大的对象；如果每个 goroutine 都实例化对象，这种非业务相关内存表那么对 GC 造成压力。
+
+**初始化**（并没有申明大小哦！也就是说其中的元素个数是不确定的）
+
+```go
+bufferpool := &sync.Pool {
+    New: func() interface {} {
+        return struct{}{}
+    }
+}
+```
+
+`Get()` 获取已存在的对象，如果没有，则初始化。
+
+`Put()` 将对象放回，但对象什么时候真正释放是不受外界控制的。
+
+:construction_worker: 当用完一定要记得 Put 回去，否则无法复用，通常 defer。
+
+```go
+buffer := bufferPool.Get()
+defer bufferPool.Put(buffer)
+```
+
+**为什么不适合 socket 或 DB 长连接？**
+
+主要还是 ∵ 对 Pool 中的元素数量无法确定。
+
+- Pool 池里的元素随时可能释放掉，释放策略完全由 runtime 内部管理。
+- Get 获取到的元素对象可能是刚创建的，也可能是之前创建好 cache 住的，无法却分。
+
+**临时对象什么时候销毁呢？**
+
+在一个临时对象池的 Put 或 Get 第一次被调用的时候，这个池就会被添加到池汇总列表中。
+
+池清理函数会遍历池汇总列表，对于其中的每一个临时对象池，它都会先将池中所有的**私有临时对象**和**共享临时对象**列表都置为 nil，然后再把这个池中的**所有本地池列表**都销毁掉。最后，池清理函数会把池汇总列表重置为空的切片。外部代码再无对它们的应用，在之后的 GC 就会被回收。
+
+- 本地池列表长度同 P
+- 每个本地池都包含
+  - `private` 存储私有临时对象，只能被关联 P 队列中的 goroutine 访问。
+  - `shared` 共享临时对象列表，可以被 goroutine 访问到（锁控制）。
+  - `sync.Mutex`
+
+一个运行中 goroutine 必然关联一个 P，会从本地池列表中获取一个本地池。**取哪个我们是无法控制 P 的行为的**。
+
+![image-20240720210752845](Readme.assets/image-20240720210752845.png)
+
+Put 方法总会先试图把新的临时对象，存储到对应的本地池的 private 中。后续若发现 private 已有值，就会存到 shared。
+
+Get 会先从 private 获取，若 nil，则会访问 shared，如果所有 share 都没有找到，就 New。
+
+![image-20240720211248060](Readme.assets/image-20240720211248060.png)
