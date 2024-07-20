@@ -217,14 +217,116 @@ v[2] = 5 // safe
 
 ## [Context](https://pkg.go.dev/context)
 
-用于在多个 goroutine 之间传递取消信号、超时和截止日期等信息 → 生命周期管理 LCM。
+上下文 [`context.Context`](https://draveness.me/golang/tree/context.Context) 用于在多个 goroutine 之间**传递信号/请求、超时和截止日期等信息**。
 
-**创建**
+**目的：在多个 Goroutine 组成的树中同步取消信号以减少对资源的消耗和占用**
 
-`context.Background()` 空上下文，作为根节点。
+- `Deadline`：返回 [`context.Context`](https://draveness.me/golang/tree/context.Context) 完成工作的截止日期；
+- `Done`：返回一个 chan，该 chan 会在当前工作**完成后**/上下文被**取消后关闭**，多次调用 `Done` 方法会返回同一个 chan；
+- `Err`：返回 [`context.Context`](https://draveness.me/golang/tree/context.Context) 结束的原因，它只会在 `Done` 方法对应的 Channel 关闭时返回非空的值；
+  - 如果 ctx 取消，返回 `Canceled` 错误；
+  - 如果 ctx 超时，返回 `DeadlineExceeded` 错误；
 
-`context.TODO()` 空上下文，但未决定如何使用。
+- `Value`：从 [`context.Context`](https://draveness.me/golang/tree/context.Context) 中获取键对应的值，对同一个上下文，多次调用并传入相同的 `Key` 会返回相同的结果。
 
 ```go
-
+type Context interface {
+	Deadline() (deadline time.Time, ok bool)
+	Done() <-chan struct{}
+	Err() error
+	Value(key interface{}) interface{}
+}
 ```
+
+### Background/TODO
+
+[`context.Background`](https://draveness.me/golang/tree/context.Background) & [`context.TODO`](https://draveness.me/golang/tree/context.TODO) 都用于创建 context.Context 对象，可被 goroutine 复用。
+
+- `background` ctx 的默认值，所有其他 ctx 都由其衍生。
+- `todo` 仅在不确定应该使用哪种上下文时使用。
+
+![golang-context-hierarchy](https://img.draveness.me/golang-context-hierarchy.png)
+
+```go
+ctx := context.Background()
+ctx := context.TODO()
+```
+
+### Deadline
+
+`context.WithDeadline()` 函数允许你从现有的上下文对象派生出一个新的上下文对象，并设置一个额外的截止时间。
+
+```go
+parentCtx := context.Background()
+deadline := time.Now().Add(5 * time.Second)
+ctx, cancel := context.WithDeadline(parentCtx, deadline)
+```
+
+### Timeout
+
+`context.WithTimeout()` 和 `context.WithDeadline()` 类似，但不同的是它提供了一个持续相对时间（duration），而不是绝对的截止时间。
+
+HTTP/PRC 往往启动树形结构的 goroutine，每个请求由一个单独的 goroutine 处理。
+
+每一个 [`context.Context`](https://draveness.me/golang/tree/context.Context) 都会从顶层 Goroutine 依次传递至下层。如果上层有错误，可以及时**同步**到下层。
+
+![golang-context-usage](https://img.draveness.me/golang-context-usage.png)
+
+多个 goroutine 可以同时订阅 ctx.Done() 的超时分支，保证在同一时刻因出错而停止，实现**同步**。
+
+![golang-with-context](https://img.draveness.me/golang-with-context.png)
+
+```go
+func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	go handle(ctx, 500*time.Millisecond)
+    // go handle(ctx, 1500*time.Millisecond)
+	select {
+	case <-ctx.Done():
+		fmt.Println("main", ctx.Err())
+	}
+}
+
+func handle(ctx context.Context, duration time.Duration) {
+	select {
+	case <-ctx.Done():
+		fmt.Println("handle", ctx.Err())
+	case <-time.After(duration):
+		fmt.Println("process request with", duration)
+	}
+}
+```
+
+
+### Cancel
+
+[`context.WithCancel`](https://draveness.me/golang/tree/context.WithCancel) 能从 [`context.Context`](https://draveness.me/golang/tree/context.Context) 中衍生出一个新的子 ctxt & 返回用于取消该 ctxt 的函数 cancel。
+
+一旦我们执行返回的取消函数，当前上下文以及它的子上下文都会被取消，所有的 goroutine 都会**同步**收到这一取消信号。
+
+**如何理解撤销？**
+
+一旦 ctxt 被撤销，接收通道就会被立即关闭，对于不包含任何值的通道，关闭会使其接收立刻结束。调用 `ctxt.Done()` 就会立刻感知。
+
+```go
+cancelCtx, cancel := context.WithCancel(context.Background())
+go longRunningTask(cancelCtx)  // pass cancel ctx to goroutine
+time.Sleep(3 * time.Second)
+cancel()                       // cancel from main
+```
+
+![image-20240720202030935](Readme.assets/image-20240720202030935.png)
+
+### Value
+
+[`context.WithValue`](https://draveness.me/golang/tree/context.WithValue) 能从父上下文中创建一个子上下文，传值给子上下文使用。
+
+子上下文可通过 K，**类型断言**获取 V。
+
+```go
+withValCtx := context.WithValue(context.Background(), "K", "V")
+value := ctx.Value("K");
+```
+
