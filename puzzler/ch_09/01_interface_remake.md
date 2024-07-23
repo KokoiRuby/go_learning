@@ -191,3 +191,35 @@ if sv, ok := v.(myInt); ok {
     // TODO
 }
 ```
+
+### Why
+
+`interface `类型存在的意义是为了实现 OOP 思想 → “高内聚/低耦合”。
+
+**“开闭原则”：扩展开放，修改关闭。**
+
+:cry: 增加方法满足业务，导致模块越来越臃肿
+
+- Banker: [save() + pay() + transfer()] + share(), membership()...
+
+:smile: 抽象出模块，不同的功能对应不同的实现 = **多态思想：通过父类指针 → 子类实例**
+
+- AbstractBanker: DoBusi()
+
+  - SaveBanker: DoBusi()
+
+  - PayBanker: DoBusi()
+
+  - TransferBanker: DoBusi()
+
+    ++
+
+  - ShareBanker: DoBusi()
+
+  - MembershipBanker(): DoBusi()
+
+**“依赖倒转”：面向接口/抽象编程。**
+
+:cry: [A|B].DriveBenz, [A|B].DriveBMW, [A|B]DriveTesla ← ++C & Toyota
+
+:smile: [A|B|C] → <u>Driver.DriveCar</u> ← Benz, BMW, Tesla, Toyota
