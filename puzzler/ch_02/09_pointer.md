@@ -51,3 +51,19 @@ println(n) // 2
 - 当我们 make 创建一个引用类型时，实际上创建的是一个底层数据结构，返回该类型的值 = 指向这个数据结构的指针。
 - 传递和共享数据效率更高，传递时实际上是传递值副本，但由于这个值就是指针，所以也是传递引用。
 
+> uintptr vs. unsafe.Pointer
+
+`uintptr` 是一个整数类型，用于**存储指针的数值**。
+
+```go
+uintptr(unsafe.Pointer(&x))
+```
+
+`unsafe.Pointer` 是一个特殖的指针类型，**可包含任何类型的指针**，支持类型转换。
+
+```go
+unsafe.Pointer(&x)
+(*int)unsafe.Pointer(&x)  // convert to *int
+*(*int)unsafe.Pointer(&x) // take value of *int
+```
+
