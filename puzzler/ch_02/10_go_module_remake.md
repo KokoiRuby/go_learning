@@ -96,3 +96,38 @@ $ go get github.com/gin-gonic/gin@vx.y.z
 $ go mod edit -require="github.com/gin-gonic/gin@v1.1.4"
 $ go mod tidy
 ```
+
+### Deepin
+
+**语义导入版本 Semantic Import Versioning**
+
+vX.Y.Z where X is major 主版本, Y is minor 次版本, Z is patch
+
+- X 不同达标不兼容
+- X 相同，Y 大的后向兼容
+- Z 不影响兼容性
+
+**如果同一个包的新旧版本是兼容的，那么它们的包导入路径应该是相同的。**
+
+```go
+import {
+	"github.com/sirupsen/logrus" // works for both v1.7.0 & v1.8.1
+}
+```
+
+对于不兼容的版本，需要将版本号引入
+
+```go
+import (
+    "github.com/sirupsen/logrus"           // v1.7.0 & v1.8.1
+    logv2 "github.com/sirupsen/logrus/v2"  // v2.0.4
+)
+```
+
+**最小版本选择 Minimal Version Selection**
+
+**Go 会在该项目依赖项的所有版本中，选出符合项目整体要求的“最小版本”**
+
+proj → A v1.5.0 → C v1.1.0 where latest C v1.7.0
+
+​     → B v1.2.0 → **C v1.3.0**
