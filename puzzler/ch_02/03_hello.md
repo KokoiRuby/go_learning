@@ -23,6 +23,8 @@ func main() {
 }
 ```
 
+如果 main() 里面**引用了同一个包的其它方法/类型**，运行时要带上所属的 `.go` 文件。
+
 ```bash
 # run
 $ go run hello.go
@@ -30,6 +32,10 @@ $ go run hello.go
 # build bin & run
 $ go build
 $ ./hello
+
+# if main.go contains type & methods from other .go
+$ go run main.go [*.go ...]
+$ go run .
 ```
 
 :warning: **go 编译器是逐行编译的，因此一行只写一条语句**，不要把多条语句写在同一行，否则报错。

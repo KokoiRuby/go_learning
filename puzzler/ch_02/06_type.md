@@ -11,7 +11,14 @@
 
 #### integer
 
-Architecture-Specific Types 平台相关 (长度可变): int, uint, uintptr
+Architecture-Specific Types 平台相关 (长度可变): **int**, uint, uintptr
+
+- 32-bit 系统，`int` 类型通常为 32 位，即 4 个字节。
+- 64-bit 系统，`int` 类型通常为 64 位，即 8 个字节。
+
+```go
+fmt.Println(unsafe.Sizeof(int(0)))
+```
 
 | 序号       | Desc                                                         |
 | :--------- | :----------------------------------------------------------- |
@@ -63,11 +70,11 @@ s += 1           // -128
 
 #### byte
 
-Golang里面没有专门的字符类型，如果要存储单个字符或者字母，一般使用 `byte` 来保存
+Gol 中没有专门的字符类型，如果要存储单个字符或者字母，一般使用 `byte` 来保存
 
 #### bool
 
-在 Go 语言中 bool 类型只能是**true or false**, 1 byte
+在 Go 语言中 bool 类型只能是 **true or false**, 1 byte
 
 ### Conversion
 
@@ -130,7 +137,7 @@ type IntSlice []int
 
 类型重定义**会创建一个新的类型**，它与原始类型在类型系统中是**不同的**。所以必要时需要进行类型转换。
 
-现有/原始类型也称为重定义类型的潜在类型；**潜在类型相同的不同类型的值之间是可以进行类型转换**。
+UC：一般想使用第三方库，但无法修改源码，想扩展该库的结构体，可以使用
 
 ```go
 type ReDefType ExistingType
@@ -138,13 +145,13 @@ type ReDefType ExistingType
 
 ```go
 type Celsius float64
-type Fahrenheit float64
 
-func main() {
-    c := Celsius(25.0)
-    f := Fahrenheit(c*9/5 + 32)
-    
-    fmt.Printf("%.2f degrees Celsius is %.2f degrees Fahrenheit\n", c, f)
+// ext. a new method 
+func (c Celsius) String() string {
+    return fmt.Sprintf("%.2f°C", c)
 }
+
+var degree Celsius = 22.5
+fmt.Println(degree.String())
 ```
 

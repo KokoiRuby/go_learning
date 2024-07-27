@@ -44,9 +44,36 @@ for{
 }
 ```
 
+:warning: **for 循环变量迭代的是地址，导致在每次迭代时获取的值都是迭代结束的值，而不是每次循环对应的值。**
+
+:construction_worker: 可以在循环内部创建一个局部变量，将迭代的值赋给这个局部变量，然后在闭包中使用这个局部变量。
+
+```go
+func main() {
+    nums := []int{1, 2, 3, 4, 5}
+
+    // nok
+    for _, num := range nums {
+        go func() {
+            fmt.Println(num)
+        }()
+    }
+    
+    // ok
+    for _, num := range nums {
+        numCopy := num
+        go func() {
+            fmt.Println(numCopy)
+        }()
+    }
+}
+```
+
+
+
 :construction_worker: **Practice**
 
-for range 遍历数组，∵ 数组属于值类型，所以传入的是副本，会进行浅拷贝。
+for range 遍历数组，∵ 数组属于值类型，所以传入的是副本。
 
 ```go
 arr := [...]int{1, 2, 3, 4, 5, 6}
@@ -64,7 +91,7 @@ for i, e := range arr {
 fmt.Println(arr)
 ```
 
-for range 遍历数组，∵ 数组属于引用类型，所以传入的是引用/指针，会进行深拷贝。
+for range 遍历数组，∵ 数组属于引用类型，所以传入的是引用/指针。
 
 ```go
 sl := []int{1, 2, 3, 4, 5, 6}

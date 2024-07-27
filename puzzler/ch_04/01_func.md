@@ -24,6 +24,7 @@ func getSum(a, b int) int {
 }
 
 x := getSum // %T → func(int, int) int
+x(1, 2)     // call
 ```
 
 Go 函数还可以作为**实参** argument，在其他函数内部调用，一般也称为回调 callback。
@@ -36,7 +37,7 @@ func myFunc(funvar func(int, int) int, a, b int) int {
 b := myFunc(getSum, 1, 2)
 ```
 
-Go 支持**(多)返回值命名**
+Go 支持**(多)返回值命名**。注：返回值命名 all or nothing，即不能只有部分返回命名。
 
 ```go
 func cal(a, b int) (sum, sub int) {
@@ -81,6 +82,12 @@ Go 函数**不支持重载** Overloading，即同名函数不同参数列表。
 **重载 Overloading**：函数名相同，但参数列表一定不同，返回值可任意。
 
 **重写 Overriding**: **继承**关系中，子类对父类的同名方法重写，参数列表必须相同，作用域修饰符相同或者更大。
+
+:construction_worker: 强制重载
+
+1. 接口：不同接收者的方法。
+2. 可变长参数：不同长度的同类型参数。
+3. 函数选项：用于在构造函数中提供一种灵活的方式来配置结构体的属性。
 
 ### Call by *
 

@@ -5,6 +5,8 @@
 - **不可变**：一旦声明就不可二次赋值，提高<u>并发安全性</u>和存储利用率 + 只需要分配一块内存空间
 - O(1) 获取字符串长度 len
 
+双引号转义，反引号表示 raw 不转义。**不建议手写转义，先写好然后赋值到 IDE 中自动完成转义。**
+
 ```go
 var s1 string = "this is a string"
 s2 := `
@@ -120,7 +122,12 @@ UTF-8 可变宽，会用一个或多个字节的二进制数来表示某个字�
 rune 是 Go 语言特有的一个基本数据类型，代表一个 Unicode 字符。
 
 ```go
-type rune = int32 // alias
+// alias
+type rune = int32 
+type byte = uint8
+
+// rune cnt in str
+utf8.RuneCountInString(str)
 ```
 
 <img src="https://miro.medium.com/v2/resize:fit:1050/1*b3TZICZOHODu0gWJdmH2KA.png" alt="img" style="zoom:67%;" />

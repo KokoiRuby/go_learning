@@ -184,3 +184,82 @@ c := C{
     B{"Mary", 1000},
 }
 ```
+
+### Composition
+
+**鸭子类型**：态类型语言中的一种类型风格，对象的适用性不是基于继承特定的类或实现接口，而是取决于对象的方法和属性。
+
+Go 以**组合**的方式实现鸭子类型。
+
+- 接口组合接口：接口扩展
+- 结构体组合结构体：类继承
+- 结构体组合结构体指针：类继承
+- 结构体组合接口：结构体实现方法
+
+:construction_worker: A 组合 B 后，可直接在 A 上调用 B 方法；B 已实现的接口，A 也相应实现；
+
+```go
+type Inner struct {
+}
+
+func (i Inner) DoSomething() {
+    fmt.Println("Inner")
+}
+
+type Outer struct {
+	Inner
+}
+
+var o Outer
+// same
+o.DoSomething()        // Inner
+o.Inner.DoSomething()  // Inner
+```
+
+:construction_worker: 同名方法 B 会覆盖 A
+
+```go
+type Inner struct {
+}
+
+func (i Inner) DoSomething() {
+    fmt.Println("Inner")
+}
+
+type Outer struct {
+	Inner
+}
+
+func (o Outer) DoSomething() {
+    fmt.Println("Outer")
+}
+
+o.DoSomething()        // Outer
+o.Inner.DoSomething()  // Inner
+```
+
+:construction_worker: 注意！
+
+```go
+type Inner struct {
+}
+
+func (i Inner) SayHello() {
+	fmt.Println("Hello, " + i.Name())
+}
+
+func (i Inner) Name() string {
+	return "Inner"
+}
+
+type Outer struct {
+	Inner
+}
+
+func (o Outer) Name() string {
+	return "Outer"
+}
+
+o.SayHello() // Hello Inner
+```
+

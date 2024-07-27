@@ -255,3 +255,15 @@ go func() {
 ```
 
 **结构体实例内存大小**：`size := unsafe.Sizeof(instnce)`
+
+**结构体打印**：`fmt.Printf("%+v", struct)`
+
+**结构体字段自引用**：只能用指针
+
+```go
+type Node struct {
+    val int
+    nxt *Node
+}
+```
+
