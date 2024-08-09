@@ -5,7 +5,7 @@ package tutorial;
 import "google/protobuf/timestamp.proto";
 
 // import path of the package which will contain all the generated code for this file.
-option go_package = "github.com/protocolbuffers/protobuf/examples/go/tutorialpb";
+option go_package = "github.com/protocolbuffers/protobuf/grpc_examples/go/tutorialpb";
 
 // If a field is repeated, the field may be repeated any number of times
 message AddressBook {

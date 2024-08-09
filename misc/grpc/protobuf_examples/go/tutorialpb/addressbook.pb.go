@@ -3,7 +3,7 @@
 // Note: START and END tags are used in comments to define sections used in
 // tutorials.  They are not part of the syntax for Protocol Buffers.
 //
-// To get an in-depth walkthrough of this file and the related examples, see:
+// To get an in-depth walkthrough of this file and the related grpc_examples, see:
 // https://developers.google.com/protocol-buffers/docs/tutorials
 
 // [START declaration]

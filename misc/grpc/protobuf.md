@@ -86,7 +86,7 @@ $ bazel --version
 [Build](https://github.com/protocolbuffers/protobuf/tree/main/examples#go) by make
 
 ```bash
-# modify examples/go/go.mod
+# modify grpc_examples/go/go.mod
 # go 1.14 → go 1.22
 $ make go
 ```
@@ -109,7 +109,7 @@ Each **person** in the address book has a name, an ID, an email address, and a c
 1. `.proto` ++ **messages** for each struct u want to secrialize, then specify a name and a type for each field. A **message** is just an aggregate containing a set of typed fields. For more info, pls refer to [Guide](https://protobuf.dev/programming-guides/proto3).
 
 ```protobuf
-option go_package = "github.com/protocolbuffers/protobuf/examples/go/tutorialpb";
+option go_package = "github.com/protocolbuffers/protobuf/grpc_examples/go/tutorialpb";
 
 // If a field is repeated, the field may be repeated any number of times
 message AddressBook {
