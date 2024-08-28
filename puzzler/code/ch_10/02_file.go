@@ -11,7 +11,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Printf("file is %v", file)
+	fmt.Printf("file.go is %v", file)
 
 	// close
 	err = file.Close()

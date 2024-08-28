@@ -17,7 +17,7 @@ func main() {
 
 	file, err := os.Open(filePath)
 	if err != nil {
-		fmt.Println("Error opening file:", err)
+		fmt.Println("Error opening file.go:", err)
 		return
 	}
 	defer func(file *os.File) {
@@ -27,7 +27,7 @@ func main() {
 		}
 	}(file)
 
-	// Determine the compression format based on the file extension
+	// Determine the compression format based on the file.go extension
 	var reader io.Reader
 	switch {
 	case isBzip2(filePath):
@@ -45,21 +45,21 @@ func main() {
 		return
 	}
 
-	// Read the compressed file content
+	// Read the compressed file.go content
 	buffer := make([]byte, 1024)
 	n, err := reader.Read(buffer)
 	if err != nil && err != io.EOF {
-		fmt.Println("Error reading compressed file:", err)
+		fmt.Println("Error reading compressed file.go:", err)
 		return
 	}
 
-	// Process the compressed file content
+	// Process the compressed file.go content
 	content := string(buffer[:n])
-	fmt.Println("Compressed file content:")
+	fmt.Println("Compressed file.go content:")
 	fmt.Println(content)
 }
 
-// Helper functions to determine the compression format based on file extension
+// Helper functions to determine the compression format based on file.go extension
 
 func isBzip2(filePath string) bool {
 	return filepath.Ext(filePath) == ".bz2"

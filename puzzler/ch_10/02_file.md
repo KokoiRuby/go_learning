@@ -13,13 +13,13 @@
 
 ```go
 // read-only
-file, err := os.Open("/path/to/file")
+file, err := os.Open("/path/to/file.go")
 if err != nil {
-	fmt.Println("Error opening file:", err)
+	fmt.Println("Error opening file.go:", err)
 	return
 }
-// file is a ptr = fd
-fmt.Printf("file= %v", file)
+// file.go is a ptr = fd
+fmt.Printf("file.go= %v", file)
 defer file.Close()
 ```
 
@@ -60,10 +60,10 @@ for {
 			if n > 0 {
 				fmt.Print(string(buf[:n]))
 			}
-			fmt.Println("Reached end of file.")
+			fmt.Println("Reached end of file.go.")
 			break
 		} else {
-			fmt.Println("Error reading file:", err)
+			fmt.Println("Error reading file.go:", err)
 			break
 		}
 	}
@@ -74,7 +74,7 @@ for {
 `os.ReadFile` 全部读取到内存中；若文件太大，可能会导致内存溢出 :warning:
 
 ```go
-byteString, err := ioutil.ReadFile("/path/to/file")
+byteString, err := os.ReadFile("/path/to/file.go")
 fmt.Println(string(byteString))
 ```
 
@@ -241,7 +241,7 @@ defer file.Close()
 // better
 defer func() {
 	if err := file.Close(); err != nil {
-		fmt.Println("Error closing file:", err)
+		fmt.Println("Error closing file.go:", err)
 	}
 }()
 ```

@@ -27,7 +27,7 @@ for _, file := range files {
     if f, err = os.Open(file); err != nil {
         return
     }
-    defer f.Close() // wrong, file won't close after loop
+    defer f.Close() // wrong, file.go won't close after loop
     f.Process(data)
  }
 ```
@@ -37,7 +37,7 @@ for _, file := range files {
 ```go
 defer func(f *os.File) {
         if err := f.Close(); err != nil {
-            log.Printf("Error closing file: %v", err)
+            log.Printf("Error closing file.go: %v", err)
         }
     }(file)
 ```

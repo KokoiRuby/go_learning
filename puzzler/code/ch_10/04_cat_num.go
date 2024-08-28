@@ -33,7 +33,7 @@ func main() {
 	if flag.NArg() == 0 {
 		cat(bufio.NewReader(os.Stdin))
 	}
-	// read per file
+	// read per file.go
 	for i := 0; i < flag.NArg(); i++ {
 		f, err := os.Open(flag.Arg(i))
 		if err != nil {

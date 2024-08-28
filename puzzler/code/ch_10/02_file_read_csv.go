@@ -11,7 +11,7 @@ func main() {
 
 	file, err := os.Open(filePath)
 	if err != nil {
-		fmt.Println("Error opening file:", err)
+		fmt.Println("Error opening file.go:", err)
 		return
 	}
 	defer func(file *os.File) {

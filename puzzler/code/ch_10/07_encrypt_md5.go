@@ -34,20 +34,20 @@ func main() {
 	fmt.Printf("MD5 hash of '%s': %s\n", data, hash)
 
 	filename := "testfile.txt"
-	fileContent := []byte("This is a test file.")
+	fileContent := []byte("This is a test file.go.")
 	if err := os.WriteFile(filename, fileContent, 0644); err != nil {
-		fmt.Println("Error creating file:", err)
+		fmt.Println("Error creating file.go:", err)
 		return
 	}
 
 	fileHash, err := md5HashFile(filename)
 	if err != nil {
-		fmt.Println("Error hashing file:", err)
+		fmt.Println("Error hashing file.go:", err)
 		return
 	}
-	fmt.Printf("MD5 hash of file '%s': %s\n", filename, fileHash)
+	fmt.Printf("MD5 hash of file.go '%s': %s\n", filename, fileHash)
 
 	if err := os.Remove(filename); err != nil {
-		fmt.Println("Error removing file:", err)
+		fmt.Println("Error removing file.go:", err)
 	}
 }

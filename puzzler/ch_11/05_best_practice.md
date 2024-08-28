@@ -235,10 +235,10 @@ func protect(g func()) {
 1. read
 
 ```go
-file, err := os.Open("/path/to/file")
+file, err := os.Open("/path/to/file.go")
 defer func(f *os.File) {
     if err := f.Close(); err != nil {
-        log.Printf("Error closing file: %v", err)
+        log.Printf("Error closing file.go: %v", err)
     }
 }(file)
 

@@ -22,7 +22,7 @@ func main() {
 
 	file, err := os.Create("to_write.xml")
 	if err != nil {
-		fmt.Println("Error creating file:", err)
+		fmt.Println("Error creating file.go:", err)
 		return
 	}
 	defer file.Close()

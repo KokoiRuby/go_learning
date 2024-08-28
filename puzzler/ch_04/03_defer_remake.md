@@ -3,7 +3,7 @@ defer：一种**类栈**的延时机制，通常用于**资源释放**。
 Go 逐行编译执行到 defer 的时候，会将其语句入栈，暂时不执行。
 
 ```go
-// file
+// file.go
 defer file Close()
 
 // db conn

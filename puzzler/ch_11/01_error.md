@@ -34,7 +34,7 @@ err := errors.New("err string")
 ```go
 type PathError struct {
     Op string    // operation
-    Path string  // path/to/file
+    Path string  // path/to/file.go
     Err error    // Returned by the system call.
 }
 
@@ -103,13 +103,13 @@ printError := func(i int, err error) {
 
 ```go
 func doSomething() error {
-	return errors.New("file does not exist")
+	return errors.New("file.go does not exist")
 }
 
 err := doSomething()
 if err != nil {
-    if err.Error() == "file does not exist" {
-		fmt.Println("Error: The file does not exist.")
+    if err.Error() == "file.go does not exist" {
+		fmt.Println("Error: The file.go does not exist.")
 	} else if err.Error() == "permission denied" {
 		fmt.Println("Error: Permission denied.")
 	} else {

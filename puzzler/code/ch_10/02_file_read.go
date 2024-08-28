@@ -9,7 +9,7 @@ import (
 func main() {
 	file, err := os.Open("./sample.txt")
 	if err != nil {
-		fmt.Println("Error opening file:", err)
+		fmt.Println("Error opening file.go:", err)
 		return
 	}
 	defer func(file *os.File) {
@@ -32,10 +32,10 @@ func main() {
 				if n > 0 {
 					fmt.Print(string(buf[:n]))
 				}
-				fmt.Println("Reached end of file.")
+				fmt.Println("Reached end of file.go.")
 				break
 			} else {
-				fmt.Println("Error reading file:", err)
+				fmt.Println("Error reading file.go:", err)
 				break
 			}
 		}

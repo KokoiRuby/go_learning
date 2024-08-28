@@ -8,7 +8,7 @@ md5 是一种常见的哈希函数，用于生成 128 位（16 字节）散列�
 
 ```go
 hasher := md5.New()
-io.Copy(hasher, file)               // cp file to hasher
+io.Copy(hasher, file)               // cp file.go to hasher
 hex.EncodeToString(hasher.Sum(nil)) // cal
 ```
 

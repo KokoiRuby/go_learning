@@ -16,7 +16,7 @@ type Person struct {
 func main() {
 	file, err := os.Open("to_read.xml")
 	if err != nil {
-		fmt.Println("Error opening file:", err)
+		fmt.Println("Error opening file.go:", err)
 		return
 	}
 	defer file.Close()

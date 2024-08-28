@@ -54,15 +54,15 @@ func main() {
 
 	err := writeGobToFile("person.gob", originalPerson)
 	if err != nil {
-		fmt.Println("Error writing to file:", err)
+		fmt.Println("Error writing to file.go:", err)
 		return
 	}
 
 	decodedPerson, err := readGobFromFile("person.gob")
 	if err != nil {
-		fmt.Println("Error reading from file:", err)
+		fmt.Println("Error reading from file.go:", err)
 		return
 	}
 
-	fmt.Printf("Decoded Person from file: %+v\n", decodedPerson)
+	fmt.Printf("Decoded Person from file.go: %+v\n", decodedPerson)
 }
